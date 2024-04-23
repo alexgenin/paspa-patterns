@@ -2,6 +2,7 @@
 # Re-run all analyses on the dataset
 # 
 
+# Change this on your computer to match where this file is
 wd <- "/home/alex/work/2023/misc/angie_paspalum_experiment/analyses_alex"
 setwd(wd)
 

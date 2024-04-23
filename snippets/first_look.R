@@ -97,8 +97,48 @@ ggplot(subset(position_means),
 positions_wide <- 
   reshape2::dcast(position_means, 
                   treatment + date + position + mean_moisture + 
-                    drying_speed + mean_air_temp + local_cover ~ data_type, 
+                    drying_speed + mean_air_temp + local_cover + global_cover ~ data_type, 
                   value.var = "mean_value")
+
+# How does cover change ? 
+ggplot(positions_wide, 
+       aes(x = date, 
+           y = ndvi)) + 
+  geom_point(aes(color = treatment)) + 
+  geom_line(aes(color = treatment, 
+                group = paste(treatment, position))) 
+
+# How does cover change ? 
+ggplot(positions_wide, 
+       aes(x = date, 
+           y = local_cover)) + 
+  geom_point(aes(color = treatment)) + 
+  geom_line(aes(color = treatment, 
+                group = paste(treatment, position))) 
+
+# How does cover change ? 
+ggplot(positions_wide, 
+       aes(x = date, 
+           y = thermal - mean_air_temp)) + 
+  geom_point(aes(color = treatment)) + 
+  geom_line(aes(color = treatment, 
+                group = paste(treatment, position))) 
+
+# How does cover change ? 
+ggplot(positions_wide, 
+       aes(x = date, 
+           y = mean_moisture)) + 
+  geom_point(aes(color = treatment)) + 
+  geom_line(aes(color = treatment, 
+                group = paste(treatment, position))) 
+
+# How does cover change ? 
+ggplot(positions_wide, 
+       aes(x = ndvi, 
+           y = local_cover)) + 
+  geom_point(aes(color = treatment)) + 
+  geom_line(aes(color = treatment, 
+                group = paste(treatment, position))) 
 
 # Vegetation cools down surface ?
 ggplot(subset(positions_wide, date %in% watering_days), 
