@@ -1,3 +1,7 @@
+# 
+# This file adds information to image data that indicates whether a pixel falls 
+# in a probe area or not
+# 
 
 image_idx <- readRDS("./cache/image_index.rds")
 moisture_map <- read_img("./input-data/moisture_mapping.png", long = FALSE)

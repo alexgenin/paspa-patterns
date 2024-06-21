@@ -1,5 +1,5 @@
 # 
-# Read input images as matrices
+# Read input images as R matrices
 # 
 # 
 
@@ -8,8 +8,13 @@ data_dir <- "input-data"
 # Read all image-based files
 all_files <- file.path(data_dir, dir(data_dir, 
                                      recursive = TRUE, 
-                                     pattern = "*.(jpg|JPG|tif|txt)"))
-all_files <- all_files[!grepl("Thermal/TIF", all_files)]
+                                     pattern = "*.(jpg|JPG|tif)$"))
+
+# We need to use the float32 versions of the Thermal files, as tiff::readTIFF cannot 
+# read tiffs with 64 bits float numbers
+all_files <- all_files[
+  ! ( grepl("Thermal", all_files) & ! grepl("float32", all_files) ) 
+]
 
 img_index <- ldply(sample(all_files), function(f) { 
   cat(sprintf("Reading %s \n", f))
@@ -40,3 +45,5 @@ img_index <- ldply(sample(all_files), function(f) {
 }, .progress = "time")
 
 saveRDS(img_index, "./cache/image_index.rds")
+
+

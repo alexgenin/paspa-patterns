@@ -10,6 +10,10 @@ data_dir <- "input-data"
 all_files <- file.path(data_dir, dir(data_dir, 
                                      recursive = TRUE, 
                                      pattern = "*.(png)"))
+
+# Convert all of them to pngs because they are large bit depth tiff, which are 
+# badly handled by R
+
 all_files <- all_files[grepl("RGB", all_files)]
 
 training_dataset <- ldply(sample(all_files), function(f) { 
@@ -28,7 +32,7 @@ training_dataset <- ldply(sample(all_files), function(f) {
   veg_pixels <- subset(img, band == 1 & value < 0.5) 
   img <- mutate(img, 
                 classif = ifelse(paste(row, col) %in% paste(veg_pixels[ ,"row"], 
-                                                          veg_pixels[ ,"col"]), 
+                                                            veg_pixels[ ,"col"]), 
                                  "vege", "bare"))
   # Discard band info, we don't need it now
   img <- subset(img, band == 1) 
@@ -71,8 +75,8 @@ training_samples <- ddply(training_dataset, ~ classif, function(df) {
 # set for all pictures
 library(ggplot2)
 ggplot(training_samples, aes(x = band1, y = band2)) + 
-  geom_point(aes(color = classif), alpha = .2) + 
-  facet_wrap( ~ orig_file )
+  geom_point(aes(color = classif), alpha = .2)
+
 
 
 # Now classify all images 

@@ -2,7 +2,7 @@
 # Read and format the moisture data 
 #
 
-path <- "input-data/Soil moisture and Temperature_Loggers/Soil_moisture_and_Airtemperature_readings 23_04_23_to_08_06_23.xlsx"
+path <- "./input-data/Soil_moisture_and_Airtemperature_readings 23_04_23_to_08_06_23.xlsx"
 
 moisture_dat <- as.data.frame(readxl::read_excel(path, sheet = 2))
 

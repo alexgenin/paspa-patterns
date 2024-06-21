@@ -24,7 +24,6 @@ image_moist_idx <- readRDS("./cache/image_index_complete.rds")
 position_means <- ddply(image_moist_idx, ~ cache_path, function(info) { 
   
   img <- readRDS(info[["cache_path"]])
-  
   # Compute mean of image data at that position 
   imgvals <- ddply(subset(img, position > 0), ~ position, summarise, 
                    mean_value = mean(value), 
@@ -57,20 +56,6 @@ position_means <- ddply(image_moist_idx, ~ cache_path, function(info) {
   data.frame(info, global_cover = global_cover, vals)
 }, .progress = "time")
 
-position_deltas <- ddply(position_means, ~ data_type + treatment + position, 
-                         function(df) { 
-  df[ ,"rankdate"] <- rank(df[ ,"date"])
-  ddply(df, ~ date, function(this_df) { 
-    nb_days <- subset(df, rankdate == ( this_df[ ,"rankdate"] - 1 ))
-    nb_days <- rbind(this_df, nb_days)
-    if ( nrow(nb_days) >= 2 ) { 
-      a <- coef(with(nb_days, lm(mean_value ~ rankdate)))
-      mutate(this_df, delta_value = a[2])
-    } else { 
-      mutate(this_df, delta_value = NA)
-    }
-  })
-})
 
 # General moisture during experiment
 ggplot(moisture, aes(x = timestamp, y = value)) + 
@@ -86,12 +71,6 @@ ggplot(subset(position_means, position == position[1]),
        aes(x = date, y = local_cover)) + 
   geom_point(aes(color = treatment)) + 
   geom_line(aes(color = treatment)) 
-
-ggplot(subset(position_means), 
-       aes(x = mean_moisture, y = delta_value)) + 
-  geom_point(aes(color = treatment)) + 
-  facet_wrap( ~ data_type, scales = "free_y")
-
 
 # Reformat data to wide df
 positions_wide <- 
@@ -135,10 +114,12 @@ ggplot(positions_wide,
 # How does cover change ? 
 ggplot(positions_wide, 
        aes(x = ndvi, 
+           text = date, 
            y = local_cover)) + 
   geom_point(aes(color = treatment)) + 
   geom_line(aes(color = treatment, 
-                group = paste(treatment, position))) 
+                group = paste(treatment, position))) + 
+  facet_wrap( ~ treatment ) 
 
 # Vegetation cools down surface ?
 ggplot(subset(positions_wide, date %in% watering_days), 
@@ -187,7 +168,12 @@ ggplot(subset(ndvi_mean_delta, date %in% delta_watering_days),
 
 
 
-
+ndvi_distribs <- ddply(subset(image_moist_idx, data_type == "ndvi"), 
+                       ~ cache_path, function(info) { 
+  img <- readRDS(info[["cache_path"]])
+  data.frame(img[1, c("treatment", "date")], 
+             value = sample(img[ ,"value"], size = 1024))
+})
 
 
 

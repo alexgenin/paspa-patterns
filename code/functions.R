@@ -3,7 +3,8 @@ library(plyr)
 library(tidyr)
 
 # Options 
-IMAGE_SIDE_NPTS <- 256
+# Note: quadrat is 120 cm
+IMAGE_SIDE_NPTS <- 120 / 1 # one px = 10 mm
 
 # 
 long_form <- function(m) { 
